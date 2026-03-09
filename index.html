@@ -226,6 +226,8 @@
     <div class="reconsider-card">
       <button class="reconsider-close" onclick="closeReconsiderModal()"
               aria-label="닫기">✕</button>
+      <img id="reconsider-img" class="reconsider-img" src="" alt=""
+           loading="lazy" onerror="this.style.display='none'">
       <p class="reconsider-emoji" aria-hidden="true">🥺</p>
       <p class="reconsider-msg" id="reconsider-msg"></p>
       <p class="reconsider-sub" id="reconsider-sub"></p>
@@ -242,6 +244,6 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>

@@ -11,13 +11,14 @@
    ────────────────────────────────────────────────────────────── */
 
 /**
- * ✏️  PASSWORD_HASH: 비밀번호의 SHA-256 해시값
+ * ✏️  비밀번호는 .env 파일의 VITE_PW 에서 관리합니다.
+ * 소스코드에 직접 노출되지 않으며, git에도 올라가지 않습니다.
  *
- * 변경 방법 — 브라우저 콘솔에서 아래 코드를 실행하면 새 해시를 얻을 수 있습니다.
- *   crypto.subtle.digest('SHA-256', new TextEncoder().encode('입력할비밀번호'))
- *     .then(b => console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
+ * 변경 방법:
+ *   1. .env 파일의 VITE_PW 값을 원하는 숫자로 교체
+ *   2. Netlify → Site configuration → Environment variables 에서도 동일하게 업데이트
  */
-const PASSWORD_HASH = 'd79528385fd0b3a3d4246ae3a50dda495c6c72796fec9dc15b0a1536ac8a2340';
+const PASSWORD = import.meta.env.VITE_PW;
 
 /** 비밀번호 화면 문구 */
 const pwData = {
@@ -132,8 +133,10 @@ const proposalData = {
   noBtn:    '싫어요..',
 };
 
-/** 재고 모달 문구 */
+/** 재고 모달 문구 + 사진 */
 const reconsiderData = {
+  img: 'images/reconsider.jpg', // ← 사용할 사진 경로 (없으면 숨김 처리됨)
+  imgAlt: '다시 생각해봐요',
   msg: '조금만 더 생각해봐요.',
   sub: '이 마음, 꽤 오래 준비했거든요. 🥺\n다시 한번 눌러봐요.',
 };
@@ -197,6 +200,8 @@ function initContent() {
   setText('proposal-no',       proposalData.noBtn);
 
   // 재고 모달
+  const rcImg = document.getElementById('reconsider-img');
+  if (rcImg) { rcImg.src = reconsiderData.img; rcImg.alt = reconsiderData.imgAlt; }
   setText('reconsider-msg', reconsiderData.msg);
   setLines('reconsider-sub', reconsiderData.sub);
 
@@ -247,33 +252,17 @@ function buildResultGrid() {
    4. 비밀번호 처리
    ────────────────────────────────────────────────────────────── */
 
-/** 입력값을 SHA-256 해시로 변환 */
-async function sha256(text) {
-  const buffer = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(text)
-  );
-  return [...new Uint8Array(buffer)]
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-/** 비밀번호 확인 (해시 비교) */
-async function checkPassword() {
-  const input   = document.getElementById('pw-input');
-  const errorEl = document.getElementById('pw-error');
-  const screen  = document.getElementById('password-screen');
-  const submitBtn = document.getElementById('pw-submit');
+/** 비밀번호 확인 */
+function checkPassword() {
+  const input     = document.getElementById('pw-input');
+  const errorEl   = document.getElementById('pw-error');
+  const screen    = document.getElementById('password-screen');
 
   if (!input) return;
 
-  // 중복 클릭 방지
-  submitBtn.disabled = true;
-
   const entered = input.value.trim();
-  const enteredHash = await sha256(entered);
 
-  if (enteredHash === PASSWORD_HASH) {
+  if (entered === PASSWORD) {
     // 정답: 오류 숨기고 화면 페이드아웃 후 제거
     errorEl.classList.remove('show');
     screen.classList.add('hide');
@@ -295,7 +284,6 @@ async function checkPassword() {
 
     input.value = '';
     input.focus();
-    submitBtn.disabled = false;
   }
 }
 
