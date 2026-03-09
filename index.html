@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="우리의 이야기">
+  <title>우리의 이야기</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ─── 비밀번호 화면 ─── -->
+  <div id="password-screen" aria-label="비밀번호 입력" role="dialog" aria-modal="true">
+    <div class="pw-card">
+      <p class="pw-label" id="pw-label"></p>
+      <h1 class="pw-title" id="pw-title"></h1>
+      <p class="pw-desc"  id="pw-desc"></p>
+      <div class="pw-input-wrap">
+        <input
+          id="pw-input"
+          class="pw-input"
+          type="password"
+          inputmode="numeric"
+          autocomplete="off"
+          aria-label="비밀번호 입력"
+          onkeydown="if(event.key==='Enter') checkPassword()"
+        >
+        <button class="pw-submit" id="pw-submit" onclick="checkPassword()">→</button>
+      </div>
+      <p class="pw-hint"  id="pw-hint"></p>
+      <p class="pw-error" id="pw-error" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <main id="app">
+
+    <!-- ─── 장면 1: 첫 화면 ─── -->
+    <section class="scene active" id="scene-1" aria-label="시작 화면">
+      <div class="hero-bg" id="hero-bg" role="img" aria-label="배경 사진"></div>
+      <div class="hero-overlay"></div>
+      <div class="center-content">
+        <h1 class="hero-title" id="hero-title"></h1>
+        <p class="hero-sub" id="hero-sub"></p>
+        <button class="btn btn--primary" id="start-btn" onclick="goNext()"></button>
+      </div>
+    </section>
+
+    <!-- ─── 장면 2: 스토리 1 — 첫 설렘 ─── -->
+    <section class="scene" id="scene-2" aria-label="첫 설렘">
+      <div class="story-v2">
+        <div class="story-header">
+          <p class="story-main" id="story-1-main"></p>
+          <p class="story-hint" id="story-1-hint"></p>
+        </div>
+        <div class="photo-choice" id="story-1-choices">
+          <button class="photo-opt" onclick="selectPhoto(this, 1)"
+                  aria-label="첫 번째 사진 선택">
+            <img id="story-1-img-a" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+          <button class="photo-opt" onclick="selectPhoto(this, 1)"
+                  aria-label="두 번째 사진 선택">
+            <img id="story-1-img-b" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 장면 3: 스토리 2 — 소소한 일상 ─── -->
+    <section class="scene" id="scene-3" aria-label="소소한 일상">
+      <div class="story-v2">
+        <div class="story-header">
+          <p class="story-main" id="story-2-main"></p>
+          <p class="story-hint" id="story-2-hint"></p>
+        </div>
+        <div class="photo-choice" id="story-2-choices">
+          <button class="photo-opt" onclick="selectPhoto(this, 2)"
+                  aria-label="첫 번째 사진 선택">
+            <img id="story-2-img-a" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+          <button class="photo-opt" onclick="selectPhoto(this, 2)"
+                  aria-label="두 번째 사진 선택">
+            <img id="story-2-img-b" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 장면 4: 스토리 3 — 가장 행복했던 순간 ─── -->
+    <section class="scene" id="scene-4" aria-label="가장 행복했던 순간">
+      <div class="story-v2">
+        <div class="story-header">
+          <p class="story-main" id="story-3-main"></p>
+          <p class="story-hint" id="story-3-hint"></p>
+        </div>
+        <div class="photo-choice" id="story-3-choices">
+          <button class="photo-opt" onclick="selectPhoto(this, 3)"
+                  aria-label="첫 번째 사진 선택">
+            <img id="story-3-img-a" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+          <button class="photo-opt" onclick="selectPhoto(this, 3)"
+                  aria-label="두 번째 사진 선택">
+            <img id="story-3-img-b" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 장면 5: 스토리 4 — 함께하고 싶은 미래 ─── -->
+    <section class="scene" id="scene-5" aria-label="함께하고 싶은 미래">
+      <div class="story-v2">
+        <div class="story-header">
+          <p class="story-main" id="story-4-main"></p>
+          <p class="story-hint" id="story-4-hint"></p>
+        </div>
+        <div class="photo-choice" id="story-4-choices">
+          <button class="photo-opt" onclick="selectPhoto(this, 4)"
+                  aria-label="첫 번째 사진 선택">
+            <img id="story-4-img-a" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+          <button class="photo-opt" onclick="selectPhoto(this, 4)"
+                  aria-label="두 번째 사진 선택">
+            <img id="story-4-img-b" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 장면 6: 스토리 5 — 오늘 이 순간 ─── -->
+    <section class="scene" id="scene-6" aria-label="오늘 이 순간">
+      <div class="story-v2">
+        <div class="story-header">
+          <p class="story-main" id="story-5-main"></p>
+          <p class="story-hint" id="story-5-hint"></p>
+        </div>
+        <div class="photo-choice" id="story-5-choices">
+          <button class="photo-opt" onclick="selectPhoto(this, 5)"
+                  aria-label="첫 번째 사진 선택">
+            <img id="story-5-img-a" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+          <button class="photo-opt" onclick="selectPhoto(this, 5)"
+                  aria-label="두 번째 사진 선택">
+            <img id="story-5-img-b" src="" alt="" loading="lazy"
+                 onerror="this.style.opacity='0'">
+            <div class="photo-heart" aria-hidden="true">♥</div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 장면 7: AI 분석 시작 ─── -->
+    <section class="scene" id="scene-7" aria-label="관계 분석 시작">
+      <div class="center-content">
+        <span class="badge" id="analyzer-badge"></span>
+        <h2 class="section-title" id="analyzer-title"></h2>
+        <p class="section-desc" id="analyzer-desc"></p>
+        <button class="btn btn--primary" id="analysis-start-btn"
+                onclick="startAnalysis()"></button>
+      </div>
+    </section>
+
+    <!-- ─── 장면 8: AI 분석 로딩 ─── -->
+    <section class="scene" id="scene-8" aria-label="분석 진행 중">
+      <div class="center-content">
+        <div class="pulse-ring" aria-hidden="true">
+          <div class="pulse-dot"></div>
+        </div>
+        <ul class="step-list" id="step-list"
+            role="status" aria-live="polite" aria-label="분석 단계"></ul>
+        <div class="progress-track" aria-label="분석 진행률">
+          <div class="progress-fill" id="progress-fill"
+               role="progressbar" aria-valuenow="0"
+               aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <p class="progress-pct" id="progress-pct">0%</p>
+      </div>
+    </section>
+
+    <!-- ─── 장면 9: AI 분석 결과 ─── -->
+    <section class="scene" id="scene-9" aria-label="분석 결과">
+      <div class="center-content result-content">
+        <span class="badge" id="result-badge"></span>
+        <div class="result-grid" id="result-grid"></div>
+        <p class="result-conclusion" id="result-conclusion"></p>
+        <button class="btn btn--soft" onclick="goNext()" aria-label="다음">다음</button>
+      </div>
+    </section>
+
+    <!-- ─── 장면 10: 프로포즈 ─── -->
+    <section class="scene" id="scene-10" aria-label="프로포즈">
+      <div class="center-content proposal-content">
+        <p class="proposal-lead"    id="proposal-lead"></p>
+        <p class="proposal-bridge"  id="proposal-bridge"></p>
+        <p class="proposal-context" id="proposal-context"></p>
+        <h2 class="proposal-question" id="proposal-question"></h2>
+        <!-- 긍정 / 부정 버튼 -->
+        <div class="proposal-btns">
+          <button class="btn btn--rose"    id="proposal-yes" onclick="showFinalOverlay()"></button>
+          <button class="btn btn--soft-no" id="proposal-no"  onclick="showReconsiderModal()"></button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── 재고 모달 (부정 버튼 클릭 시) ─── -->
+  <div class="reconsider-backdrop" id="reconsider-backdrop" hidden
+       role="dialog" aria-modal="true" aria-label="다시 생각해봐요">
+    <div class="reconsider-card">
+      <button class="reconsider-close" onclick="closeReconsiderModal()"
+              aria-label="닫기">✕</button>
+      <p class="reconsider-emoji" aria-hidden="true">🥺</p>
+      <p class="reconsider-msg" id="reconsider-msg"></p>
+      <p class="reconsider-sub" id="reconsider-sub"></p>
+    </div>
+  </div>
+
+  <!-- ─── 최종 오버레이 ─── -->
+  <div class="final-overlay" id="final-overlay"
+       role="dialog" aria-modal="true" aria-label="마지막 메시지" hidden>
+    <div class="hearts-container" id="hearts-container" aria-hidden="true"></div>
+    <div class="final-card">
+      <p class="final-line-1" id="final-line-1"></p>
+      <p class="final-line-2" id="final-line-2"></p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

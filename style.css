@@ -1,0 +1,962 @@
+/* ═══════════════════════════════════════════════════════════════
+   style.css — merry-me proposal website
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* ── 비밀번호 화면 ────────────────────────────────────────────── */
+
+/* 전체 화면 오버레이 */
+#password-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ivory);
+  padding: 2rem;
+  /* 페이지 로드 시 부드럽게 등장 */
+  animation: pw-fadein 0.9s ease both;
+}
+
+#password-screen.hide {
+  animation: pw-fadeout 0.8s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes pw-fadein {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pw-fadeout {
+  to { opacity: 0; transform: translateY(-16px); }
+}
+
+/* 카드 */
+.pw-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.2rem;
+  max-width: 420px;
+  width: 100%;
+}
+
+/* 작은 레이블 */
+.pw-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rose-deep);
+  font-weight: 600;
+}
+
+/* 타이틀 */
+.pw-title {
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+}
+
+/* 설명 */
+.pw-desc {
+  font-size: 1rem;
+  color: var(--text-mid);
+  line-height: 1.9;
+}
+
+/* 입력 영역 */
+.pw-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.pw-input {
+  flex: 1;
+  padding: 0.85rem 1.2rem;
+  border: 1.5px solid var(--rose-light);
+  border-radius: 50px;
+  background: var(--white);
+  font-size: 1.1rem;
+  font-family: inherit;
+  color: var(--text);
+  text-align: center;
+  letter-spacing: 0.2em;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pw-input:focus {
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(232, 180, 184, 0.25);
+}
+
+/* 흔들기 애니메이션 (비밀번호 오류 시) */
+.pw-input.shake {
+  animation: pw-shake 0.45s ease;
+  border-color: var(--rose-deep);
+}
+
+@keyframes pw-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px); }
+}
+
+/* 확인 버튼 */
+.pw-submit {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: var(--rose);
+  color: var(--white);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 14px rgba(232, 180, 184, 0.45);
+}
+
+.pw-submit:hover {
+  background: var(--rose-deep);
+  transform: translateY(-2px);
+}
+
+/* 형식 힌트 */
+.pw-hint {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  letter-spacing: 0.04em;
+}
+
+/* 오류 메시지 */
+.pw-error {
+  font-size: 0.88rem;
+  color: var(--rose-deep);
+  min-height: 1.2em;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pw-error.show {
+  opacity: 1;
+}
+
+
+/* ── 0. CSS 변수 ──────────────────────────────────────────────── */
+:root {
+  /* 색상 */
+  --ivory:       #fdf8f5;
+  --cream:       #f7f0ec;
+  --rose:        #e8b4b8;
+  --rose-deep:   #c9848a;
+  --rose-light:  #f5e6e8;
+  --text:        #3a3030;
+  --text-mid:    #7a6060;
+  --text-soft:   #b09898;
+  --white:       #ffffff;
+
+  /* 효과 */
+  --shadow:      0 4px 24px rgba(200, 140, 145, 0.13);
+  --radius:      16px;
+  --transition:  0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ── 1. 리셋 & 기본 ───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* 장면 전환형: 스크롤 비활성화 */
+}
+
+body {
+  background: var(--ivory);
+  color: var(--text);
+  /* 한국어 폰트 우선순위: macOS → Windows → Android */
+  font-family:
+    'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR',
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;      /* 한국어 줄바꿈 자연스럽게 */
+  overflow-wrap: break-word; /* 긴 단어 강제 줄바꿈 */
+  line-height: 1.7;
+}
+
+
+/* ── 2. 앱 컨테이너 ───────────────────────────────────────────── */
+#app {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+
+/* ── 3. 장면 시스템 ───────────────────────────────────────────── */
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ivory);
+  overflow-y: auto;
+  padding: 2rem;
+
+  /* 기본: 숨김 */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(28px);
+  z-index: 0;
+  transition:
+    opacity  var(--transition),
+    transform var(--transition);
+}
+
+/* 현재 장면 */
+.scene.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+  z-index: 1;
+}
+
+/* 나가는 장면 */
+.scene.exit {
+  opacity: 0;
+  transform: translateY(-28px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+
+/* ── 4. 공통: 중앙 콘텐츠 블록 ───────────────────────────────── */
+.center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  max-width: 540px;
+  width: 100%;
+  padding: 2rem 0;
+}
+
+
+/* ── 5. 버튼 ──────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 2.2rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    transform   0.2s ease,
+    box-shadow  0.2s ease,
+    background  0.2s ease;
+}
+
+.btn:hover  { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+
+/* 주요 버튼 (로즈 배경) */
+.btn--primary {
+  background: var(--rose);
+  color: var(--white);
+  box-shadow: 0 4px 18px rgba(232, 180, 184, 0.45);
+}
+.btn--primary:hover {
+  background: var(--rose-deep);
+  box-shadow: 0 6px 22px rgba(201, 132, 138, 0.5);
+}
+
+/* 보조 버튼 (흰 배경) */
+.btn--soft {
+  background: var(--white);
+  color: var(--rose-deep);
+  border: 1.5px solid var(--rose-light);
+  box-shadow: var(--shadow);
+}
+.btn--soft:hover {
+  background: var(--rose-light);
+}
+
+/* 프로포즈 버튼 (진한 로즈) */
+.btn--rose {
+  background: var(--rose-deep);
+  color: var(--white);
+  font-size: 1.05rem;
+  padding: 0.95rem 2.6rem;
+  box-shadow: 0 6px 22px rgba(201, 132, 138, 0.45);
+}
+.btn--rose:hover {
+  background: #b5767c;
+  box-shadow: 0 8px 26px rgba(201, 132, 138, 0.55);
+}
+
+
+/* ── 6. 배지 ──────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.32rem 1.1rem;
+  border-radius: 50px;
+  background: var(--rose-light);
+  color: var(--rose-deep);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+
+/* ── 7. 장면 1: 히어로 ────────────────────────────────────────── */
+#scene-1 {
+  padding: 0;
+}
+
+/* 배경 이미지 */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('images/hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #f0d8db; /* 이미지 없을 때 폴백 */
+}
+
+/* 부드러운 오버레이 */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(253, 248, 245, 0.25) 0%,
+    rgba(253, 248, 245, 0.55) 45%,
+    rgba(253, 248, 245, 0.88) 100%
+  );
+}
+
+#scene-1 .center-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.07em;
+  line-height: 1.2;
+}
+
+.hero-sub {
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  color: var(--text-mid);
+  line-height: 2;
+}
+
+
+/* ── 8. 장면 2–4: 사진 선택 레이아웃 ────────────────────────── */
+
+/* 장면 전체 래퍼 */
+.story-v2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 700px;
+  padding: 2rem 1.5rem;
+}
+
+/* 텍스트 헤더 */
+.story-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.story-main {
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* 선택 유도 힌트 문구 */
+.story-hint {
+  font-size: 1.2rem;
+  color: var(--text-soft);
+  letter-spacing: 0.03em;
+}
+
+/* 두 사진 나란히 */
+.photo-choice {
+  display: flex;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+/* 사진 선택 버튼 */
+.photo-opt {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  border: none;
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--rose-light); /* 이미지 없을 때 폴백 배경 */
+  padding: 0;
+  /* 사진 비율: 세로형 기준 (가로형 사진이면 aspect-ratio를 4/3으로 변경) */
+  aspect-ratio: 3 / 4;
+  transition:
+    transform  0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.photo-opt img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* 하트 아이콘 (선택 시 나타남) */
+.photo-heart {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* 호버: 살짝 떠오름 */
+.photo-opt:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 36px rgba(200, 140, 145, 0.35);
+}
+
+/* 선택된 사진 */
+.photo-opt.selected {
+  box-shadow:
+    0 0 0 3px var(--rose-deep),
+    0 14px 40px rgba(201, 132, 138, 0.45);
+  transform: scale(1.03);
+}
+
+.photo-opt.selected .photo-heart {
+  opacity: 1;
+  animation: heart-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes heart-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* 선택되지 않은 사진: 흐려짐 */
+.photo-opt.dimmed {
+  opacity: 0.4;
+  transform: scale(0.97);
+  pointer-events: none;
+}
+
+
+/* ── 9. 장면 5: AI 분석 시작 ──────────────────────────────────── */
+.section-title {
+  font-size: clamp(1.45rem, 3.8vw, 2.1rem);
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.section-desc {
+  font-size: 1rem;
+  color: var(--text-mid);
+  line-height: 2;
+}
+
+
+/* ── 10. 장면 6: AI 로딩 ──────────────────────────────────────── */
+
+/* 펄스 애니메이션 링 */
+.pulse-ring {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse-ring::before,
+.pulse-ring::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--rose);
+  animation: pulse-expand 2.2s ease-out infinite;
+}
+.pulse-ring::after {
+  animation-delay: 1.1s;
+}
+
+.pulse-dot {
+  width: 18px;
+  height: 18px;
+  background: var(--rose);
+  border-radius: 50%;
+}
+
+@keyframes pulse-expand {
+  0%   { width: 18px; height: 18px; opacity: 0.9; }
+  100% { width: 60px; height: 60px; opacity: 0; }
+}
+
+/* 분석 단계 목록 */
+.step-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-height: 7.5rem;
+  width: 100%;
+  max-width: 300px;
+  text-align: left;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: var(--text-soft);
+  opacity: 0;
+  transform: translateY(7px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.step-item.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 불릿 점 */
+.step-item::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--rose);
+  flex-shrink: 0;
+}
+
+/* 진행률 바 */
+.progress-track {
+  width: 220px;
+  height: 3px;
+  background: var(--rose-light);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--rose), var(--rose-deep));
+  border-radius: 2px;
+  transition: width 0.55s ease;
+}
+
+.progress-pct {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  letter-spacing: 0.06em;
+}
+
+
+/* ── 11. 장면 7: 분석 결과 ────────────────────────────────────── */
+.result-content {
+  gap: 1.3rem;
+}
+
+/* 카드 그리드 */
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 580px;
+}
+
+.result-card {
+  background: var(--white);
+  border: 1px solid var(--rose-light);
+  border-radius: var(--radius);
+  padding: 1.5rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: var(--shadow);
+  animation: card-appear 0.5s ease both;
+}
+
+.result-card:nth-child(1) { animation-delay: 0.05s; }
+.result-card:nth-child(2) { animation-delay: 0.2s; }
+.result-card:nth-child(3) { animation-delay: 0.35s; }
+
+@keyframes card-appear {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.result-label {
+  font-size: 0.76rem;
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.result-value {
+  font-size: 1.9rem;
+  font-weight: 300;
+  color: var(--rose-deep);
+  line-height: 1;
+}
+
+/* 결론 문장 */
+.result-conclusion {
+  font-size: 0.9rem;
+  color: var(--text-mid);
+  border-top: 1px solid var(--rose-light);
+  padding-top: 1.2rem;
+  max-width: 400px;
+  text-align: center;
+  line-height: 1.9;
+}
+
+
+/* ── 12. 장면 8: 프로포즈 ─────────────────────────────────────── */
+.proposal-content {
+  gap: 0.9rem;
+}
+
+.proposal-lead {
+  font-size: 1.05rem;
+  color: var(--text-soft);
+  letter-spacing: 0.06em;
+}
+
+.proposal-bridge {
+  font-size: 1.1rem;
+  color: var(--text-mid);
+}
+
+.proposal-context {
+  font-size: 0.98rem;
+  color: var(--text-mid);
+  line-height: 2;
+  margin-bottom: 0.6rem;
+}
+
+.proposal-question {
+  font-size: clamp(1.9rem, 5.5vw, 2.9rem);
+  font-weight: 300;
+  color: var(--rose-deep);
+  letter-spacing: 0.04em;
+  margin: 0.4rem 0 1rem;
+}
+
+/* 긍정 / 부정 버튼 묶음 */
+.proposal-btns {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* 부정 버튼 — 흐릿한 소프트 톤 */
+.btn--soft-no {
+  background: transparent;
+  color: var(--text-soft);
+  border: 1.5px solid var(--rose-light);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.btn--soft-no:hover {
+  color: var(--text-mid);
+  border-color: var(--text-soft);
+  transform: translateY(-1px);
+}
+
+
+/* ── 재고 모달 ──────────────────────────────────────────────────── */
+
+/* 반투명 배경 */
+.reconsider-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(58, 48, 48, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: backdrop-in 0.3s ease both;
+}
+
+.reconsider-backdrop[hidden] {
+  display: none;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 카드 */
+.reconsider-card {
+  position: relative;
+  background: var(--white);
+  border-radius: 24px;
+  padding: 2.8rem 2.4rem 2.4rem;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  box-shadow: 0 12px 48px rgba(200, 140, 145, 0.2);
+  animation: card-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: scale(0.88) translateY(12px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+/* 닫기 버튼 */
+.reconsider-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.1rem;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--text-soft);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.reconsider-close:hover {
+  color: var(--text-mid);
+  transform: scale(1.15);
+}
+
+/* 이모지 */
+.reconsider-emoji {
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+/* 본문 */
+.reconsider-msg {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* 서브 */
+.reconsider-sub {
+  font-size: 0.92rem;
+  color: var(--text-mid);
+  line-height: 1.8;
+}
+
+
+/* ── 13. 최종 오버레이 ────────────────────────────────────────── */
+.final-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(253, 240, 242, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  opacity: 0;
+  animation: overlay-in 1.1s ease 0.05s forwards;
+}
+
+/* hidden 속성이 있으면 숨김 */
+.final-overlay[hidden] {
+  display: none;
+}
+
+@keyframes overlay-in {
+  to { opacity: 1; }
+}
+
+/* 메시지 카드 */
+.final-card {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  animation: card-rise 1s ease 0.4s both;
+}
+
+@keyframes card-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.final-line-1 {
+  font-size: clamp(2.8rem, 9vw, 4.5rem);
+  font-weight: 300;
+  color: var(--rose-deep);
+  letter-spacing: 0.08em;
+}
+
+.final-line-2 {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  color: var(--text-mid);
+  line-height: 2.1;
+}
+
+
+/* ── 14. 하트 파티클 ──────────────────────────────────────────── */
+.hearts-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.heart {
+  position: absolute;
+  bottom: -50px;
+  font-size: 1.2rem;
+  opacity: 0;
+  color: var(--rose);
+  user-select: none;
+  animation: float-heart linear forwards;
+}
+
+@keyframes float-heart {
+  0%   { opacity: 0;   transform: translateY(0)       scale(0.4); }
+  12%  { opacity: 0.75; }
+  80%  { opacity: 0.4; }
+  100% { opacity: 0;   transform: translateY(-105vh)   scale(1.1); }
+}
+
+
+/* ── 15. 반응형: 태블릿 이하 ─────────────────────────────────── */
+@media (max-width: 720px) {
+
+  /* 스토리 장면: 패딩 축소 */
+  .story-v2 {
+    gap: 1.5rem;
+    padding: 1.5rem 1rem;
+  }
+
+  /* 두 사진: 높이 제한 */
+  .photo-opt {
+    aspect-ratio: 3 / 4; /* 모바일도 동일 비율 유지 */
+  }
+
+  /* 분석 결과 카드: 세로 */
+  .result-grid {
+    grid-template-columns: 1fr;
+    max-width: 260px;
+  }
+
+  /* 진행률 바 */
+  .progress-track {
+    width: 75%;
+  }
+
+  .step-list {
+    max-width: 230px;
+  }
+}
+
+/* ── 16. 반응형: 소형 모바일 ─────────────────────────────────── */
+@media (max-width: 480px) {
+
+  /* 사진 두 장 간격 축소 */
+  .photo-choice {
+    gap: 0.7rem;
+  }
+
+  /* 힌트 텍스트 크기 축소 */
+  .story-hint {
+    font-size: 0.82rem;
+  }
+}
+
+/* ── 16. 반응형: 소형 모바일 ─────────────────────────────────── */
+@media (max-width: 420px) {
+  .center-content {
+    gap: 1.2rem;
+    padding: 1.5rem 0.5rem;
+  }
+
+  .story-text-box {
+    gap: 1rem;
+  }
+}
