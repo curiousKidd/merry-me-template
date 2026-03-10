@@ -219,7 +219,7 @@ function setHeroBg(src) {
 /** 스토리 장면 초기화 (idx: 1, 2, 3) */
 function initStory(data, idx) {
   setLines(`story-${idx}-main`, data.main);
-  setText(`story-${idx}-hint`,  data.hint);
+  setLines(`story-${idx}-hint`,  data.hint);
 
   const imgA = document.getElementById(`story-${idx}-img-a`);
   const imgB = document.getElementById(`story-${idx}-img-b`);
