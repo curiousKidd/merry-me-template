@@ -71,16 +71,15 @@
 
 /* 입력 영역 */
 .pw-input-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  position: relative;
   width: 100%;
   max-width: 300px;
 }
 
 .pw-input {
-  flex: 1;
-  padding: 0.85rem 1.2rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85rem 3.4rem 0.85rem 1.2rem;
   border: 1.5px solid var(--rose-light);
   border-radius: 50px;
   background: var(--white);
@@ -114,8 +113,12 @@
 
 /* 확인 버튼 */
 .pw-submit {
-  width: 46px;
-  height: 46px;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: none;
   background: var(--rose);
