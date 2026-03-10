@@ -224,7 +224,8 @@ function initContent() {
   setLines('final-line-2', finalData.line2);
 
   // 도망가는 "싫어요" 버튼 초기화
-  // initEscapeBtn();
+  // 주석시 도망가기 기능 비활성화
+  initEscapeBtn();
 }
 
 /** 히어로 배경 이미지 설정 */
