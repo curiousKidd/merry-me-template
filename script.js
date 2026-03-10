@@ -223,8 +223,16 @@ function initStory(data, idx) {
 
   const imgA = document.getElementById(`story-${idx}-img-a`);
   const imgB = document.getElementById(`story-${idx}-img-b`);
-  if (imgA) { imgA.src = data.imgA.src; imgA.alt = data.imgA.alt; }
-  if (imgB) { imgB.src = data.imgB.src; imgB.alt = data.imgB.alt; }
+  if (imgA) {
+    imgA.alt = data.imgA.alt;
+    imgA.src = data.imgA.src;
+    imgA.onerror = () => { imgA.style.opacity = '0'; };
+  }
+  if (imgB) {
+    imgB.alt = data.imgB.alt;
+    imgB.src = data.imgB.src;
+    imgB.onerror = () => { imgB.style.opacity = '0'; };
+  }
 }
 
 /** 결과 카드들을 동적으로 생성 */
