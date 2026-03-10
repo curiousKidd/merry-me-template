@@ -53,35 +53,35 @@ const storyData = [
   // 장면 2 — Q1: 첫 설렘
   {
     main:  '처음엔 그냥 좋은 사람이었어요.',
-    hint:  '처음 만났을 때, 어느 순간부터 마음이 움직이기 시작했나요?',
+    hint:  '처음 만났을 때,\n어느 순간부터 마음이 움직이기 시작했나요?',
     imgA:  { src: '/images/memory1a.jpg', alt: '첫 만남의 추억 A' },
     imgB:  { src: '/images/memory1b.jpg', alt: '첫 만남의 추억 B' },
   },
   // 장면 3 — Q2: 소소한 일상
   {
     main:  '평범한 하루도 특별했어요.',
-    hint:  '우리의 평범한 하루 중, 더 오래 기억하고 싶은 순간은요?',
+    hint:  '우리의 평범한 하루 중,\n더 오래 기억하고 싶은 순간은요?',
     imgA:  { src: '/images/memory2a.jpg', alt: '소소한 일상 A' },
     imgB:  { src: '/images/memory2b.jpg', alt: '소소한 일상 B' },
   },
   // 장면 4 — Q3: 가장 행복했던 순간
   {
     main:  '함께 웃었던 모든 순간이 소중해요.',
-    hint:  '둘이 함께 웃었던 순간들, 더 자주 떠오르는 건 어느 쪽인가요?',
+    hint:  '둘이 함께 웃었던 순간들,\n더 자주 떠오르는 건 어느 쪽인가요?',
     imgA:  { src: '/images/memory3a.jpg', alt: '행복했던 순간 A' },
     imgB:  { src: '/images/memory3b.jpg', alt: '행복했던 순간 B' },
   },
   // 장면 5 — Q4: 함께하고 싶은 미래
   {
     main:  '앞으로의 시간도 함께하고 싶어요.',
-    hint:  '앞으로도 꼭 함께하고 싶은 순간, 어느 쪽에 더 마음이 가나요?',
+    hint:  '앞으로도 꼭 함께하고 싶은 순간,\n어느 쪽에 더 마음이 가나요?',
     imgA:  { src: '/images/memory4a.jpg', alt: '함께하고 싶은 미래 A' },
     imgB:  { src: '/images/memory4b.jpg', alt: '함께하고 싶은 미래 B' },
   },
   // 장면 6 — Q5: 오늘 이 순간
   {
     main:  '그리고 오늘,',
-    hint:  '오늘 이 자리에서, 지금 마음속에 더 크게 느껴지는 건 어느 쪽인가요?',
+    hint:  '오늘 이 자리에서,\n지금 마음속에 더 크게 느껴지는 건 어느 쪽인가요?',
     imgA:  { src: '/images/memory5a.jpg', alt: '오늘의 순간 A' },
     imgB:  { src: '/images/memory5b.jpg', alt: '오늘의 순간 B' },
   },
