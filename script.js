@@ -130,8 +130,8 @@ const analysisResults = [
 
 /** 분석 결과 화면 */
 const resultData = {
-  badge:      '결과가 나왔어요',
-  conclusion: '궁합도 AI 분석 결과. 이 관계는 평생 함께해야 해요.',
+  badge:      '궁합도 AI 분석 결과',
+  conclusion: '결과가 나왔어요. 이 관계는 평생 함께해야 해요.',
 };
 
 /** 프로포즈 화면 */
@@ -224,7 +224,7 @@ function initContent() {
   setLines('final-line-2', finalData.line2);
 
   // 도망가는 "싫어요" 버튼 초기화
-  initEscapeBtn();
+  // initEscapeBtn();
 }
 
 /** 히어로 배경 이미지 설정 */
@@ -496,7 +496,7 @@ function startProposalTyping() {
   const sequence = [
     { id: 'proposal-lead',     text: proposalData.lead,     speed: 90,  pauseAfter: 450 },
     { id: 'proposal-bridge',   text: proposalData.bridge,   speed: 60,  pauseAfter: 400 },
-    { id: 'proposal-context',  text: proposalData.context,  speed: 35,  pauseAfter: 500 },
+    { id: 'proposal-context',  text: proposalData.context,  speed: 90,  pauseAfter: 500 },
     { id: 'proposal-question', text: proposalData.question, speed: 120, pauseAfter: 600 },
   ];
   const btns = document.querySelector('.proposal-btns');
@@ -661,27 +661,31 @@ function showFinalOverlay() {
   fadeBGM(0.7, 2000);
 }
 
-/** 하트 파티클 생성 */
+/** 하트 파티클 생성 (무한 반복) */
 function spawnHearts() {
   const container = document.getElementById('hearts-container');
   if (!container) return;
 
   const SYMBOLS = ['♥', '❤', '♡'];
-  const COUNT   = 20;
 
-  for (let i = 0; i < COUNT; i++) {
-    setTimeout(() => {
-      const el = document.createElement('span');
-      el.className   = 'heart';
-      el.textContent = SYMBOLS[i % SYMBOLS.length];
-      el.style.left            = (Math.random() * 96 + 2) + 'vw';
-      el.style.fontSize        = (0.7 + Math.random() * 1.3) + 'rem';
-      el.style.animationDuration = (4.5 + Math.random() * 4) + 's';
-      container.appendChild(el);
-      // 애니메이션 종료 후 제거
-      el.addEventListener('animationend', () => el.remove(), { once: true });
-    }, i * 180);
+  function spawnOne() {
+    const el = document.createElement('span');
+    el.className   = 'heart';
+    el.textContent = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+    el.style.left            = (Math.random() * 96 + 2) + 'vw';
+    el.style.fontSize        = (0.7 + Math.random() * 1.3) + 'rem';
+    el.style.animationDuration = (4.5 + Math.random() * 4) + 's';
+    container.appendChild(el);
+    el.addEventListener('animationend', () => el.remove(), { once: true });
   }
+
+  // 초기 20개 빠르게 시작
+  for (let i = 0; i < 20; i++) {
+    setTimeout(spawnOne, i * 180);
+  }
+
+  // 이후 지속적으로 생성
+  setInterval(spawnOne, 600);
 }
 
 
