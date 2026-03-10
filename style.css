@@ -15,8 +15,6 @@
   justify-content: center;
   background: var(--ivory);
   padding: 2rem;
-  /* 페이지 로드 시 부드럽게 등장 */
-  animation: pw-fadein 0.9s ease both;
 }
 
 #password-screen.hide {
@@ -379,6 +377,16 @@ body {
   line-height: 1.2;
 }
 
+.hero-dday {
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
+  /* color: var(--rose-deep); */
+  color: var(--text);
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  margin: 0.3rem 0 0.2rem;
+  opacity: 0.85;
+}
+
 .hero-sub {
   font-size: clamp(0.95rem, 2.5vw, 1.1rem);
   color: var(--text-mid);
@@ -623,7 +631,7 @@ body {
 /* 카드 그리드 */
 .result-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 1rem;
   width: 100%;
   max-width: 580px;
@@ -645,6 +653,7 @@ body {
 .result-card:nth-child(1) { animation-delay: 0.05s; }
 .result-card:nth-child(2) { animation-delay: 0.2s; }
 .result-card:nth-child(3) { animation-delay: 0.35s; }
+.result-card:nth-child(4) { animation-delay: 0.5s; }
 
 @keyframes card-appear {
   from { opacity: 0; transform: translateY(14px); }

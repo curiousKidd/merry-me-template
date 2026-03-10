@@ -11,6 +11,17 @@
    ────────────────────────────────────────────────────────────── */
 
 /**
+ * ✏️  교제 시작일은 .env 파일의 VITE_START_DATE 에서 관리합니다.
+ * 소스코드에 직접 노출되지 않으며, git에도 올라가지 않습니다.
+ *
+ * 변경 방법:
+ *   1. .env 파일의 VITE_START_DATE 값을 교제 시작일로 교체 (YYYY-MM-DD)
+ *   2. Netlify → Site configuration → Environment variables 에서도 동일하게 업데이트
+ */
+const START_DATE = import.meta.env.VITE_START_DATE;
+
+
+/**
  * ✏️  비밀번호는 .env 파일의 VITE_PW 에서 관리합니다.
  * 소스코드에 직접 노출되지 않으며, git에도 올라가지 않습니다.
  *
@@ -80,7 +91,7 @@ const storyData = [
   },
   // 장면 6 — Q5: 오늘 이 순간
   {
-    main:  '그리고 오늘,',
+    main:  '그리고 오늘',
     hint:  '오늘 이 자리에서,\n지금 마음속에 더 크게 느껴지는 건 어느 쪽인가요?',
     imgA:  { src: '/images/memory5a.jpg', alt: '오늘의 순간 A' },
     imgB:  { src: '/images/memory5b.jpg', alt: '오늘의 순간 B' },
@@ -138,13 +149,13 @@ const reconsiderData = {
   img: '/images/reconsider.jpg', // ← 사용할 사진 경로 (없으면 숨김 처리됨)
   imgAlt: '다시 생각해봐요',
   msg: '조금만 더 생각해봐요.',
-  sub: '이 마음, 꽤 오래 준비했거든요. 🥺\n다시 한번 눌러봐요.',
+  sub: '이 마음, 꽤 오래 준비했거든요. 🥺\n다시 한번 눌러봐요.\n(굳이 도망치는 걸 잡아서 눌렀네?)',
 };
 
 /** 마지막 오버레이 */
 const finalData = {
   line1: '사랑해요',
-  line2: '이 말은 이제\n화면이 아니라 직접 전할게요.',
+  line2: '이 말은 \n화면이 아니라 직접 전할게요.',
 };
 
 
@@ -186,18 +197,21 @@ function initContent() {
   setLines('analyzer-desc',      analyzerData.desc);
   setText('analysis-start-btn',  analyzerData.btn);
 
-  // 분석 결과
+  // D+일 카운터
+  const ddays = getDdays();
+  setText('hero-dday', `D+${ddays}일`);
+
+  // 분석 결과 (D+일 카드를 첫 번째로 추가)
+  analysisResults.unshift({ label: '함께한 날', value: `D+${ddays}일` });
   setText('result-badge',       resultData.badge);
   setText('result-conclusion',  resultData.conclusion);
   buildResultGrid();
 
-  // 프로포즈
-  setText('proposal-lead',     proposalData.lead);
-  setText('proposal-bridge',   proposalData.bridge);
-  setLines('proposal-context', proposalData.context);
-  setText('proposal-question', proposalData.question);
-  setText('proposal-yes',      proposalData.yesBtn);
-  setText('proposal-no',       proposalData.noBtn);
+  // 프로포즈 (텍스트는 타이핑 효과로 채워지므로 버튼만 설정, 버튼은 초기 숨김)
+  setText('proposal-yes', proposalData.yesBtn);
+  setText('proposal-no',  proposalData.noBtn);
+  const proposalBtns = document.querySelector('.proposal-btns');
+  if (proposalBtns) proposalBtns.style.opacity = '0';
 
   // 재고 모달
   const rcImg = document.getElementById('reconsider-img');
@@ -208,6 +222,9 @@ function initContent() {
   // 마지막 오버레이
   setText('final-line-1',  finalData.line1);
   setLines('final-line-2', finalData.line2);
+
+  // 도망가는 "싫어요" 버튼 초기화
+  initEscapeBtn();
 }
 
 /** 히어로 배경 이미지 설정 */
@@ -303,6 +320,8 @@ function checkPassword() {
 /** 다음 장면으로 */
 function goNext() {
   if (currentScene >= TOTAL_SCENES) return;
+  // 히어로 화면에서 첫 클릭 시 BGM 시작
+  if (currentScene === 1) startBGM();
   transitionTo(currentScene + 1);
 }
 
@@ -342,6 +361,47 @@ function transitionTo(targetIndex) {
   // 다음 장면 들어오기
   toEl.classList.add('active');
   currentScene = targetIndex;
+
+  // 프로포즈 장면 진입 시 타이핑 효과 시작
+  if (targetIndex === 10) {
+    setTimeout(startProposalTyping, 500);
+  }
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   5. BGM
+   ────────────────────────────────────────────────────────────── */
+
+/** 히어로 버튼 클릭 시 BGM 재생 (볼륨 0 → 0.4 페이드인) */
+function startBGM() {
+  const audio = document.getElementById('bgm');
+  if (!audio) return;
+  audio.volume = 0;
+  audio.play().catch(() => {}); // 재생 실패 시 조용히 무시
+  fadeBGM(0.4, 2000);
+}
+
+/**
+ * BGM 볼륨을 목표값까지 서서히 변경
+ * @param {number} target   - 목표 볼륨 (0~1)
+ * @param {number} duration - 페이드 시간 (ms)
+ */
+function fadeBGM(target, duration) {
+  const audio = document.getElementById('bgm');
+  if (!audio) return;
+
+  const start     = audio.volume;
+  const diff      = target - start;
+  const interval  = 50;
+  const steps     = duration / interval;
+  let   step      = 0;
+
+  const timer = setInterval(() => {
+    step++;
+    audio.volume = Math.min(1, Math.max(0, start + diff * (step / steps)));
+    if (step >= steps) clearInterval(timer);
+  }, interval);
 }
 
 
@@ -405,14 +465,179 @@ function setProgress(barEl, pctEl, pct) {
 
 
 /* ──────────────────────────────────────────────────────────────
-   6. 재고 모달 (부정 버튼)
+   6. 프로포즈 타이핑 효과
    ────────────────────────────────────────────────────────────── */
 
-/** "싫어요" 버튼 → 재고 모달 표시 */
+/** 한 요소에 텍스트를 한 글자씩 타이핑 후 callback 호출 */
+function typeElement(el, text, speed, callback) {
+  el.innerHTML = '';
+  let i = 0;
+  let html = '';
+
+  function next() {
+    if (i >= text.length) {
+      if (callback) callback();
+      return;
+    }
+    const ch = text[i++];
+    if (ch === '\n') {
+      html += '<br>';
+    } else {
+      html += ch.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    el.innerHTML = html;
+    setTimeout(next, speed);
+  }
+  next();
+}
+
+/** 프로포즈 장면 진입 시 순차 타이핑 실행 */
+function startProposalTyping() {
+  const sequence = [
+    { id: 'proposal-lead',     text: proposalData.lead,     speed: 90,  pauseAfter: 450 },
+    { id: 'proposal-bridge',   text: proposalData.bridge,   speed: 60,  pauseAfter: 400 },
+    { id: 'proposal-context',  text: proposalData.context,  speed: 35,  pauseAfter: 500 },
+    { id: 'proposal-question', text: proposalData.question, speed: 120, pauseAfter: 600 },
+  ];
+  const btns = document.querySelector('.proposal-btns');
+
+  // 모든 텍스트 초기화, 버튼 숨김
+  sequence.forEach(({ id }) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
+  if (btns) {
+    btns.style.transition = 'none';
+    btns.style.opacity    = '0';
+  }
+
+  function runNext(index) {
+    if (index >= sequence.length) {
+      // 타이핑 완료 후 버튼 페이드인
+      if (btns) {
+        setTimeout(() => {
+          btns.style.transition = 'opacity 0.9s ease';
+          btns.style.opacity    = '1';
+        }, 300);
+      }
+      return;
+    }
+    const { id, text, speed, pauseAfter } = sequence[index];
+    const el = document.getElementById(id);
+    if (!el) { runNext(index + 1); return; }
+
+    typeElement(el, text, speed, () => {
+      setTimeout(() => runNext(index + 1), pauseAfter);
+    });
+  }
+
+  runNext(0);
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   7. 도망가는 "싫어요" 버튼
+   ────────────────────────────────────────────────────────────── */
+
+/**
+ * 마우스를 올리거나 탭하면 버튼이 화면 랜덤 위치로 도망갑니다.
+ * 2회 도망 후 싫어요 버튼이 원래 자리로 복귀합니다. (좋아요 버튼은 고정)
+ * 복귀 후 클릭해 팝업이 열리면 도망 횟수가 초기화됩니다.
+ */
+function initEscapeBtn() {
+  const btn    = document.getElementById('proposal-no');
+  const yesBtn = document.getElementById('proposal-yes');
+  if (!btn) return;
+
+  let count = 0;
+  let noOriginLeft, noOriginTop;
+
+  function escapeTo() {
+    const bw   = btn.offsetWidth  + 20;
+    const bh   = btn.offsetHeight + 20;
+    const newX = Math.max(8, Math.random() * (window.innerWidth  - bw));
+    const newY = Math.max(8, Math.random() * (window.innerHeight - bh));
+    btn.style.left = newX + 'px';
+    btn.style.top  = newY + 'px';
+  }
+
+  function runaway(e) {
+    e.preventDefault();
+    count++;
+
+    // 1회차: DOM 변경 전 두 버튼 위치 동시 저장 → 둘 다 fixed 고정 → 싫어요만 도망
+    if (count === 1) {
+      const noRect  = btn.getBoundingClientRect();
+      const yesRect = yesBtn ? yesBtn.getBoundingClientRect() : null;
+
+      noOriginLeft = noRect.left;
+      noOriginTop  = noRect.top;
+
+      // 버튼 컨테이너 크기 고정 (버튼들이 fixed로 빠져도 텍스트 레이아웃 유지)
+      const btnsWrap = btn.closest('.proposal-btns');
+      if (btnsWrap) {
+        btnsWrap.style.minWidth  = btnsWrap.offsetWidth  + 'px';
+        btnsWrap.style.minHeight = btnsWrap.offsetHeight + 'px';
+      }
+
+      // 좋아요: 현재 위치 그대로 고정 (레이아웃 변화 방지)
+      if (yesBtn && yesRect) {
+        yesBtn.style.position = 'fixed';
+        yesBtn.style.left     = yesRect.left + 'px';
+        yesBtn.style.top      = yesRect.top  + 'px';
+        yesBtn.style.margin   = '0';
+      }
+
+      // 싫어요: fixed 전환 후 도망
+      btn.style.position   = 'fixed';
+      btn.style.left       = noRect.left + 'px';
+      btn.style.top        = noRect.top  + 'px';
+      btn.style.margin     = '0';
+      btn.style.zIndex     = '9999';
+      btn.style.transition = 'left 0.2s ease-out, top 0.2s ease-out';
+      escapeTo();
+      return;
+    }
+
+    // 2회차: 다시 도망
+    if (count === 2) {
+      escapeTo();
+      return;
+    }
+
+    // 3회차: 싫어요 원래 자리로 복귀 + 리스너 제거
+    if (count === 3) {
+      btn.style.left = noOriginLeft + 'px';
+      btn.style.top  = noOriginTop  + 'px';
+      btn.removeEventListener('mouseenter', runaway);
+      btn.removeEventListener('touchstart',  runaway);
+    }
+  }
+
+  btn.addEventListener('mouseenter', runaway);
+  btn.addEventListener('touchstart',  runaway, { passive: false });
+
+  // 재고 모달이 열릴 때 도망 횟수 초기화 (재도전 가능)
+  btn._resetEscape = function () {
+    count = 0;
+    btn.addEventListener('mouseenter', runaway);
+    btn.addEventListener('touchstart',  runaway, { passive: false });
+  };
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   7. 재고 모달 (부정 버튼)
+   ────────────────────────────────────────────────────────────── */
+
+/** "싫어요" 버튼 → 재고 모달 표시 + 도망 횟수 초기화 */
 function showReconsiderModal() {
   const backdrop = document.getElementById('reconsider-backdrop');
   if (!backdrop) return;
   backdrop.hidden = false;
+
+  const btn = document.getElementById('proposal-no');
+  if (btn && btn._resetEscape) btn._resetEscape();
 }
 
 /** 모달 닫기 → 프로포즈 장면 복귀 */
@@ -424,7 +649,7 @@ function closeReconsiderModal() {
 
 
 /* ──────────────────────────────────────────────────────────────
-   7. 최종 오버레이 + 하트 애니메이션
+   8. 최종 오버레이 + 하트 애니메이션
    ────────────────────────────────────────────────────────────── */
 
 /** "좋아요" 버튼 → 최종 오버레이 표시 */
@@ -433,6 +658,7 @@ function showFinalOverlay() {
   if (!overlay) return;
   overlay.hidden = false;
   spawnHearts();
+  fadeBGM(0.7, 2000);
 }
 
 /** 하트 파티클 생성 */
@@ -478,6 +704,15 @@ window.closeReconsiderModal = closeReconsiderModal;
 /* ──────────────────────────────────────────────────────────────
    9. 유틸리티
    ────────────────────────────────────────────────────────────── */
+
+/** 교제 시작일로부터 오늘까지 D+일 계산 */
+function getDdays() {
+  const start = new Date(START_DATE);
+  const today = new Date();
+  start.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  return Math.floor((today - start) / (1000 * 60 * 60 * 24)) + 1;
+}
 
 /** 단일 텍스트 설정 */
 function setText(id, text) {
