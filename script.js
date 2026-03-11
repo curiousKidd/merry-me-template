@@ -65,36 +65,36 @@ const storyData = [
   {
     main:  '처음엔 그냥 좋은 사람이었어요.',
     hint:  '처음 만났을 때,\n어느 순간부터 마음이 움직이기 시작했나요?',
-    imgA:  { src: '/images/memory1a.jpg', alt: '첫 만남의 추억 A' },
-    imgB:  { src: '/images/memory1b.jpg', alt: '첫 만남의 추억 B' },
+    imgA:  { src: '/images/memory1a.jpg', alt: '첫 만남의 추억 A', caption: '2021.12 · 강화도' },
+    imgB:  { src: '/images/memory1b.jpg', alt: '첫 만남의 추억 B', caption: '2021.12 · 강화도' },
   },
   // 장면 3 — Q2: 소소한 일상
   {
     main:  '평범한 하루도 특별했어요.',
     hint:  '우리의 평범한 하루 중,\n더 오래 기억하고 싶은 순간은요?',
-    imgA:  { src: '/images/memory2a.jpg', alt: '소소한 일상 A' },
-    imgB:  { src: '/images/memory2b.jpg', alt: '소소한 일상 B' },
+    imgA:  { src: '/images/memory2a.jpg', alt: '소소한 일상 A', caption: '2025.02 · 속초' },
+    imgB:  { src: '/images/memory2b.jpg', alt: '소소한 일상 B', caption: '2023.08 · 신시모도' },
   },
   // 장면 4 — Q3: 가장 행복했던 순간
   {
     main:  '함께 웃었던 모든 순간이 소중해요.',
     hint:  '둘이 함께 웃었던 순간들,\n더 자주 떠오르는 건 어느 쪽인가요?',
-    imgA:  { src: '/images/memory3a.jpg', alt: '행복했던 순간 A' },
-    imgB:  { src: '/images/memory3b.jpg', alt: '행복했던 순간 B' },
+    imgA:  { src: '/images/memory3a.jpg', alt: '행복했던 순간 A', caption: '2024.05 · 부산' },
+    imgB:  { src: '/images/memory3b.jpg', alt: '행복했던 순간 B', caption: '2024.05 · 부산' },
   },
   // 장면 5 — Q4: 함께하고 싶은 미래
   {
     main:  '앞으로의 시간도 함께하고 싶어요.',
     hint:  '앞으로도 꼭 함께하고 싶은 순간,\n어느 쪽에 더 마음이 가나요?',
-    imgA:  { src: '/images/memory4a.jpg', alt: '함께하고 싶은 미래 A' },
-    imgB:  { src: '/images/memory4b.jpg', alt: '함께하고 싶은 미래 B' },
+    imgA:  { src: '/images/memory4a.jpg', alt: '함께하고 싶은 미래 A', caption: '2025.06 · 영흥도' },
+    imgB:  { src: '/images/memory4b.jpg', alt: '함께하고 싶은 미래 B', caption: '2024.12 · 인사동' },
   },
   // 장면 6 — Q5: 오늘 이 순간
   {
     main:  '그리고 오늘',
     hint:  '오늘 이 자리에서,\n지금 마음속에 더 크게 느껴지는 건 어느 쪽인가요?',
-    imgA:  { src: '/images/memory5a.jpg', alt: '오늘의 순간 A' },
-    imgB:  { src: '/images/memory5b.jpg', alt: '오늘의 순간 B' },
+    imgA:  { src: '/images/memory5a.jpg', alt: '오늘의 순간 A', caption: '2025.12 · 제주도' },
+    imgB:  { src: '/images/memory5b.jpg', alt: '오늘의 순간 B', caption: '2026.01 · 시골' },
   },
 ];
 
@@ -131,14 +131,14 @@ const analysisResults = [
 /** 분석 결과 화면 */
 const resultData = {
   badge:      '궁합도 AI 분석 결과',
-  conclusion: '결과가 나왔어요. 이 관계는 평생 함께해야 해요.',
+  conclusion: '모든 순간을 분석했어요.\n그리고 단 하나의 결론이 나왔어요.\n두 사람은, 함께일 때 가장 빛나요.',
 };
 
 /** 프로포즈 화면 */
 const proposalData = {
   lead:     '그래서',
   bridge:   '이 질문을 드리고 싶어요.',
-  context:  '지금까지의 모든 순간이 소중했고,\n앞으로의 시간은 더 소중하게 만들고 싶어요.',
+  context:  '지금까지의 모든 순간이 소중했고, \n앞으로의 시간은 더 소중하게 만들고 싶어요.',
   question: '저와 결혼해줄래요?',
   yesBtn:   '좋아요! 💍',
   noBtn:    '싫어요..',
@@ -207,7 +207,7 @@ function initContent() {
   // 분석 결과 (D+일 카드를 첫 번째로 추가)
   analysisResults.unshift({ label: '함께한 날', value: `D+${ddays}일` });
   setText('result-badge',       resultData.badge);
-  setText('result-conclusion',  resultData.conclusion);
+  setLines('result-conclusion',  resultData.conclusion);
   buildResultGrid();
 
   // 프로포즈 (텍스트는 타이핑 효과로 채워지므로 버튼만 설정, 버튼은 초기 숨김)
@@ -254,6 +254,10 @@ function initStory(data, idx) {
     imgB.src = data.imgB.src;
     imgB.onerror = () => { imgB.style.opacity = '0'; };
   }
+  const capA = document.getElementById(`story-${idx}-cap-a`);
+  const capB = document.getElementById(`story-${idx}-cap-b`);
+  if (capA) capA.textContent = data.imgA.caption || '';
+  if (capB) capB.textContent = data.imgB.caption || '';
 }
 
 /** 결과 카드들을 동적으로 생성 */
@@ -352,7 +356,7 @@ function selectPhoto(el, idx) {
   if (img) selectedPhotos[idx - 1] = img.src;
 
   // 잠시 후 다음 장면으로 이동
-  setTimeout(goNext, 750);
+  setTimeout(goNext, 1000);
 }
 
 /** 특정 장면 번호로 전환 */
